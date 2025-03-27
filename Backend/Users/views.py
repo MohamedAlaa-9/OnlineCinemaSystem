@@ -5,7 +5,7 @@ from rest_framework import status
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.contrib.sites.shortcuts import get_current_site
-from .utils import generate_verification_link
+from .utils import generate_verification_link, send_verification_email
 from django.conf import settings
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
@@ -32,16 +32,9 @@ class RegisterView(generics.CreateAPIView):
             user = serializer.save()
             user.is_active = False
             user.save()
-
-            # Generate and send email
+            # Verification Link Generator
             verification_link = generate_verification_link(user, request)
-            send_mail(
-                subject="Verify Your Email",
-                message=f"Click the link to verify your email: {verification_link}",
-                from_email=settings.EMAIL_HOST_USER,
-                recipient_list=[user.email],
-                fail_silently=False,
-            )
+            send_verification_email(user, verification_link)
             return Response({"message": "Registration successful. Please check your email for verification."},
                             status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -75,13 +68,7 @@ class ResendVerificationEmailView(views.APIView):
 
             # Send a new verification email
             verification_link = generate_verification_link(user, request)
-            send_mail(
-                subject="Verify Your Email",
-                message=f"Click the link to verify your email: {verification_link}",
-                from_email=settings.EMAIL_HOST_USER,
-                recipient_list=[user.email],
-                fail_silently=False,
-            )
+            send_verification_email(user, verification_link)
             return Response({"message": "Verification email resent. Please check your inbox."},
                             status=status.HTTP_200_OK)
         except User.DoesNotExist:
@@ -91,13 +78,15 @@ class ResendVerificationEmailView(views.APIView):
 class LoginView(views.APIView):
     permission_classes = [AllowAny]
     def post(self, request):
-        email = request.data.get("email")
+        username = request.data.get("username")
         password = request.data.get("password")
 
         # Authenticate user
-        user = authenticate(request, email=email, password=password)
+        user = authenticate(request, username=username, password=password)
         if user is None:
             return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+        if not user.is_active:
+            return Response({"Error": "Verify Your Email First"}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
         # Generate JWT tokens
         refresh = RefreshToken.for_user(user)

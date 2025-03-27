@@ -4,6 +4,8 @@ from django.contrib.auth.models import AbstractUser, Group, Permission
 
 class User(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    username = models.CharField(max_length=50, unique= True)
+    email = models.EmailField(unique= True)
     profile_photo = models.ImageField(upload_to='profiles/', null=True, blank=True)
     is_verified = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
