@@ -14,6 +14,7 @@ class User(AbstractUser):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    last_login = models.DateTimeField(auto_now_add=True)
     groups = models.ManyToManyField(
         Group, related_name="user_groups"
     )

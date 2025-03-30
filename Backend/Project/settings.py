@@ -108,6 +108,8 @@ DATABASES = {
 
 BREVO_API_KEY = os.getenv('BREVO_API_KEY')
 
+BREVO_RESET_PASSWORD_API = os.getenv('BREVO_RESET_PASSWORD_API')
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 

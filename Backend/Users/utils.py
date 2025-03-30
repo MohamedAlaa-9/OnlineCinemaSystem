@@ -33,3 +33,27 @@ def send_verification_email(user, verification_link):
 
     response = requests.post(url, headers=headers, data=json.dumps(data))
     return response.json()
+
+
+# Reset Links
+def send_reset_link(user, verfifcation_link):
+    url = "https://api.brevo.com/v3/smtp/email"
+    headers = {
+        "accept": "application/json",
+        "api-key" : settings.BREVO_RESET_PASSWORD_API,
+        "content-type" : "application/json" 
+    }
+    data = {
+        "sender" : {"name": "Online Cinema", "email": "youssefbassem42@gmail.com"},
+        "to": [{"email": user.email}],
+        "subject": "Reset Your Password - Online Cinema System",
+        "htmlContent": f"<p> Click <a href= '{verfifcation_link}'> Here </a> to Reset Your Password. </p>"
+    }
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    return response.json()
+
+def generate_reset_link(user, request):
+    token = generate_verification_token(user)
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    frontend_url = request.build_absolute_uri(reverse('password-reset-confirm', kwargs={'uidb64': uid, 'token': token}))
+    return frontend_url

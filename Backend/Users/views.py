@@ -5,7 +5,7 @@ from rest_framework import status
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.contrib.sites.shortcuts import get_current_site
-from .utils import generate_verification_link, send_verification_email
+from .utils import generate_verification_link, send_verification_email, send_reset_link, generate_reset_link
 from django.conf import settings
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
@@ -19,6 +19,8 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
+from django.utils.timezone import now
+from django.contrib.auth.models import update_last_login
 
 User = get_user_model()
 
@@ -87,7 +89,9 @@ class LoginView(views.APIView):
             return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
         if not user.is_active:
             return Response({"Error": "Verify Your Email First"}, status=status.HTTP_406_NOT_ACCEPTABLE)
-
+        if user is not None:
+            user.last_login = now()
+            user.save(update_fields=['last_login'])
         # Generate JWT tokens
         refresh = RefreshToken.for_user(user)
         return Response(
@@ -98,20 +102,21 @@ class LoginView(views.APIView):
             status=status.HTTP_200_OK,
         )
 
-
 class LogoutView(views.APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
         try:
-            refresh_token = request.data["refresh_token"]
+            refresh_token = request.data.get("refresh")
+            if not refresh_token:
+                return Response({"error": "Refresh token is required"}, status=status.HTTP_400_BAD_REQUEST)
+
             token = RefreshToken(refresh_token)
-            token.blacklist()
-            return Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
+            token.blacklist()  
+
+            return Response({"message": "Successfully logged out"}, status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
-            return Response({"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
-
-
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class ForgotPasswordView(views.APIView):
     def post(self, request):
@@ -122,23 +127,15 @@ class ForgotPasswordView(views.APIView):
             return Response({"error": "No user found with this email."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Generate reset link
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
-        token = default_token_generator.make_token(user)
-        reset_link = request.build_absolute_uri(reverse('password-reset-confirm', kwargs={'uidb64': uid, 'token': token}))
-
+        reset_link = generate_reset_link(user=user, request=request)
         # Send email
-        send_mail(
-            subject="Reset Your Password",
-            message=f"Click the link to reset your password: {reset_link}",
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[user.email],
-            fail_silently=False,
-        )
+        send_reset_link(user=user, verfifcation_link=reset_link)
 
         return Response({"message": "Password reset email sent."}, status=status.HTTP_200_OK)
 
 
 class ResetPasswordConfirmView(views.APIView):
+    permission_classes = [AllowAny]
     def post(self, request, uidb64, token):
         try:
             uid = urlsafe_base64_decode(uidb64).decode()
@@ -156,7 +153,8 @@ class ResetPasswordConfirmView(views.APIView):
 
         if new_password != confirm_password:
             return Response({"error": "Passwords do not match"}, status=status.HTTP_400_BAD_REQUEST)
-
+        if new_password == None:
+            return Response({"error": "Password Required, Please Enter A New Password"})
         user.set_password(new_password)
         user.save()
         return Response({"message": "Password reset successfully."}, status=status.HTTP_200_OK)
