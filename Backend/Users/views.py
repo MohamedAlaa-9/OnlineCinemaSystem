@@ -1,26 +1,18 @@
-from rest_framework import generics ,views
-from .serializers import UserSerializer
+""" Views File For Users API EndPoints """
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import get_user_model
-from django.core.mail import send_mail
-from django.contrib.sites.shortcuts import get_current_site
-from .utils import generate_verification_link, send_verification_email, send_reset_link, generate_reset_link
-from django.conf import settings
+from rest_framework import (generics ,views)
+from .serializers import UserSerializer
+from .utils import (
+generate_verification_link, send_verification_email, send_reset_link, generate_reset_link )
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
-from django.http import HttpResponseRedirect
-from django.contrib.auth.tokens import default_token_generator
-from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_bytes
-from django.core.mail import send_mail
-from django.urls import reverse
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
-from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from django.utils.timezone import now
-from django.contrib.auth.models import update_last_login
+from .serializers import UserProfileSerializer
 
 User = get_user_model()
 
@@ -170,7 +162,8 @@ class ChangePasswordView(views.APIView):
 
         # Check old password
         if not user.check_password(old_password):
-            return Response({"error": "Old password is incorrect"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Old password is incorrect"},
+                            status=status.HTTP_400_BAD_REQUEST)
 
         # Check if new passwords match
         if new_password != confirm_password:
@@ -180,3 +173,25 @@ class ChangePasswordView(views.APIView):
         user.set_password(new_password)
         user.save()
         return Response({"message": "Password changed successfully."}, status=status.HTTP_200_OK)
+
+
+
+class UserProfileView(generics.RetrieveUpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        user.first_name = request.data.get('first_name', user.first_name)
+        user.last_name = request.data.get('last_name', user.last_name)
+
+        if 'profile_photo' in request.FILES:
+            user.profile_photo = request.FILES['profile_photo']
+
+        user.save()
+        return Response({"message": "Profile updated successfully",
+                        "profile": UserProfileSerializer(user).data}, status=status.HTTP_200_OK)
