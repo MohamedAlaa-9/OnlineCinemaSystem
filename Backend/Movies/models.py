@@ -16,7 +16,7 @@ class Genre(models.Model):
 class Movie(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
-    poster = models.ImageField(upload_to='posters/')
+    poster = models.URLField(blank=True, null=True)
     release_date = models.DateField()
     genres = models.ManyToManyField(Genre, related_name='movies_genre')
     imdb_rating = models.FloatField()
@@ -25,7 +25,7 @@ class Movie(models.Model):
     director = models.CharField(max_length=255)
     views_count = models.PositiveIntegerField(default=0)
     is_recent = models.BooleanField(default=False)
-    trailer_url = models.URLField()
+    trailer_url = models.URLField(blank=True, null=True)
     seats_available = models.PositiveIntegerField()
     total_seats = models.PositiveIntegerField(default=100)
     created_at = models.DateTimeField(auto_now_add=True)
