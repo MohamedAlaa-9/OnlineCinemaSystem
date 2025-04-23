@@ -4,7 +4,7 @@ import uuid
 class Genre(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     type = models.CharField(
-        max_length=50, 
+        max_length=255, 
         choices=[
             ('Drama', 'Drama'), ('Comedy', 'Comedy'), ('Action', 'Action'), 
             ('Adventure', 'Adventure'), ('Horror', 'Horror'), ('Thriller', 'Thriller'), 
@@ -15,17 +15,17 @@ class Genre(models.Model):
 
 class Movie(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=300)
     poster = models.URLField(blank=True, null=True)
     release_date = models.DateField()
     genres = models.ManyToManyField(Genre, related_name='movies_genre')
     imdb_rating = models.FloatField()
     description = models.TextField()
     actors = models.TextField()
-    director = models.CharField(max_length=255)
-    views_count = models.PositiveIntegerField(default=0)
+    director = models.TextField()
+    views_count = models.PositiveBigIntegerField()
     is_recent = models.BooleanField(default=False)
-    trailer_url = models.URLField(blank=True, null=True)
+    trailer_url = models.TextField()  #URLField
     seats_available = models.PositiveIntegerField()
     total_seats = models.PositiveIntegerField(default=100)
     created_at = models.DateTimeField(auto_now_add=True)

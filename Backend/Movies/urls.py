@@ -1,7 +1,7 @@
 from django.urls import path, include
-from .views import  TMDBMoviesView
+from .views import  Home#, MovieDetail
 
 urlpatterns = [
-#    path('', include(router.urls)),
-    path('tmdb/', TMDBMoviesView.as_view(), name="tmdb-movies"),
+    path('home/', Home.as_view(), name="home"),
+    #path('movie/<str:name>/', MovieDetail.as_view(), name="movie_detail"),
 ]
