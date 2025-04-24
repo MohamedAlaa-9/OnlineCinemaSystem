@@ -3,15 +3,8 @@ import uuid
 
 class Genre(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    type = models.CharField(
-        max_length=255, 
-        choices=[
-            ('Drama', 'Drama'), ('Comedy', 'Comedy'), ('Action', 'Action'), 
-            ('Adventure', 'Adventure'), ('Horror', 'Horror'), ('Thriller', 'Thriller'), 
-            ('Sci-Fi', 'Sci-Fi'), ('Romance', 'Romance'), ('Mystery', 'Mystery'), 
-            ('Animation', 'Animation'), ('Sports', 'Sports')
-        ]
-    )
+    type = models.CharField(max_length=255)
+    type_id = models.CharField(max_length=255, default= 0)
 
 class Movie(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -21,16 +14,13 @@ class Movie(models.Model):
     genres = models.ManyToManyField(Genre, related_name='movies_genre')
     imdb_rating = models.FloatField()
     description = models.TextField()
-    actors = models.TextField()
+    actors = models.TextField(null=True)
     director = models.TextField()
-    views_count = models.PositiveBigIntegerField()
-    is_recent = models.BooleanField(default=False)
     trailer_url = models.TextField()  #URLField
     seats_available = models.PositiveIntegerField()
     total_seats = models.PositiveIntegerField(default=100)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
 
 class Showtime(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
