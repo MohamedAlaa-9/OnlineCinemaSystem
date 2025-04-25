@@ -1,10 +1,11 @@
 import requests
 from django.conf import settings
+from celery import shared_task
 from .models import Movie, Genre
 from rest_framework.response import Response
 
 TMDB_API_URL = 'https://api.themoviedb.org/3'
-
+@shared_task
 def movie_scrap(page=1):
     api_key = settings.TMDB_API_KEY
     url = f'{TMDB_API_URL}/movie/popular?api_key={api_key}&language=en-US&page={page}'
@@ -74,4 +75,3 @@ def movie_scrap(page=1):
             movie.save()
 
     return data
-

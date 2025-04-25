@@ -16,12 +16,12 @@ class Movie(models.Model):
     description = models.TextField()
     actors = models.TextField(null=True)
     director = models.TextField()
-    trailer_url = models.TextField()  #URLField
+    trailer_url = models.TextField()
     seats_available = models.PositiveIntegerField()
     total_seats = models.PositiveIntegerField(default=100)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    
 class Showtime(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     movie = models.ForeignKey('Movies.Movie', on_delete=models.CASCADE, related_name='movie_showtime')
