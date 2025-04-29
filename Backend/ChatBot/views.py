@@ -26,6 +26,5 @@ class ChatbotMessageView(APIView):
                                           message=user_message,
                                           response=response.json()[0]['text'],
                                           timestamp=timezone.now(),
-                                          id = uuid.uuid4()
-                                          )
+                                          id = uuid.uuid4())
         return Response(response.json())
