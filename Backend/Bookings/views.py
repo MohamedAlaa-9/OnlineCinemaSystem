@@ -1,3 +1,4 @@
 from django.shortcuts import render
 
-# Create your views here.
+
+# cart page, proccess to checkout button redirect to payment page, chatbot page,
