@@ -8,6 +8,6 @@ urlpatterns = [
     path('api/movies/', include('Movies.urls'), name='Movies'),
     path('api/payments/', include('Payments.urls'), name='Payments'),
     path('api/bookings/', include('Bookings.urls'), name='Bookings'),
-    path('api/reviews/', include('reviews.urls'), name='Reviews'),
+    #path('api/reviews/', include('reviews.urls'), name='Reviews'),
     path('api/help/', include('ChatBot.urls'), name='ChatBot'),
 ]

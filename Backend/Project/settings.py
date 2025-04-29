@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'anymail',
     'Users',
     'Payments',
-    'reviews',
     'Movies',
     'ChatBot',
     'Bookings',
