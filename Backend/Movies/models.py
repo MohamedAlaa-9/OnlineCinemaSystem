@@ -25,8 +25,7 @@ class Movie(models.Model):
 class Showtime(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     movie = models.ForeignKey('Movies.Movie', on_delete=models.CASCADE, related_name='movie_showtime')
-    date = models.DateField()
-    time = models.TimeField()
+    starts_at = models.DateTimeField(default='2025-10-01 00:00:00')
     available_seats = models.PositiveIntegerField()
     cinema_hall = models.ForeignKey('Movies.CinemaHall', on_delete= models.CASCADE, related_name='showtime_cinemahall')
     
@@ -34,9 +33,7 @@ class CinemaHall(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=50)
     total_seats = models.PositiveIntegerField()
-    available_seats = models.PositiveIntegerField()
-    showtime = models.ForeignKey('Movies.Showtime', on_delete=models.CASCADE, related_name='cinemahall_showtime')
-    movie = models.ManyToManyField('Movies.Movie', related_name='movie_cinema_hall')
+    location = models.CharField(max_length=255, default='Cinema_Hall No.1')  # optional: physical location
 
 class Review(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

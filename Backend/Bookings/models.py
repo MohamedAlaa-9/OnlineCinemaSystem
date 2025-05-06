@@ -1,3 +1,4 @@
+""" Bookings models """
 from django.db import models
 import uuid
 
@@ -12,6 +13,7 @@ class Booking(models.Model):
         choices=[('Success', 'Success'), ('Pending', 'Pending'), ('Cancelled', 'Cancelled')],
         max_length=20
     )
+    stripe_transaction_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
     booked_at = models.DateTimeField(auto_now_add=True)
 
 class Ticket(models.Model):
@@ -22,7 +24,7 @@ class Ticket(models.Model):
     cinema_hall = models.ForeignKey('Movies.CinemaHall', on_delete=models.CASCADE, related_name='cinema_hall_ticket')
     seat_number = models.PositiveIntegerField()
     showtime = models.ForeignKey('Movies.Showtime', on_delete=models.CASCADE, related_name='showtime_ticket')
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=20)
     qr_code = models.ImageField(null=True, blank=True, upload_to='QR-Code/') #this qr code will contain the stripe transaction id to make employee scan it and check
     is_verified = models.BooleanField(default=False)
     verify_code = models.CharField(max_length=10, unique=True)

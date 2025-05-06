@@ -15,7 +15,7 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'fetch-movies-every-2-days': {
         'task': 'Movies.tasks.movie_scrap',
-        'schedule': crontab(day_of_week='*/2', hour=0, minute=0),
+        'schedule': crontab(day_of_week=0, hour=0, minute=1),
     },
 }
 @app.task(bind=True, ignore_result=True)

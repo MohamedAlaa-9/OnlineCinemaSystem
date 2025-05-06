@@ -20,7 +20,7 @@ class Home(APIView):
 
 class MovieDetails(APIView):
     permission_classes = [IsAuthenticated]
-
+    
     def get(self, request, name):
         try:
             movie = Movie.objects.get(title=name)
