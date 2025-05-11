@@ -3,32 +3,141 @@ version: "3.1"
 intents:
   - greet
   - goodbye
+  - ask_help
   - affirm
   - deny
-  - mood_great
-  - mood_unhappy
   - bot_challenge
+  - ask_movie_showtimes
+  - ask_movie_cast
+  - ask_movie_director
+  - ask_movie_rating
+  - ask_movie_genre
+  - ask_movie_location
+  - ask_ticket_validity
+  - ask_movie_info
+  - ask_release_date
+  - ask_ticket_price
+  - ask_movie_duration
+  - ask_movie_availability
+  - ask_movie_language
+  - ask_movie_subtitles
+  - ask_movie_suitable
+  - ask_genre_recommendation
+  - ask_family_friendly
+  - ask_movie_theater_availability
+  - ask_user_rating
+  - ask_current_movies
+  - ask_upcoming_releases
+  - ask_top_rated_movies
+  - ask_movie_festivals
+  - ask_movie_summary
+  - ask_kid_friendly_movies
+  - ask_streaming_platform
+  - ask_3d_availability
+  - inform_genre
+  - inform_movie_name
+  - fallback
+
+entities:
+  - movie_name
+  - genre
+  - location
+  - time
+  - date
+
+slots:
+  movie_name:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: movie_name
+      - type: from_intent
+        intent: ask_movie_location
+        value: movie_name
+      - type: from_intent
+        intent: inform_movie_name
+        value: movie_name
+      - type: from_intent
+        intent: ask_movie_showtimes
+        value: movie_name
+      - type: from_intent
+        intent: ask_movie_info
+        value: movie_name
+  location:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: location
+  date:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: date
+  time:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: time
+  genre:
+      type: text
+      influence_conversation: true
+      mappings:
+        - type: from_entity
+          entity: genre
+        - type: from_intent
+          intent: inform_genre
+          value: genre
 
 responses:
   utter_greet:
-  - text: "Hey! How are you?"
-
-  utter_cheer_up:
-  - text: "Here is something to cheer you up:"
-    image: "https://i.imgur.com/nGF1K8f.jpg"
-
-  utter_did_that_help:
-  - text: "Did that help you?"
-
-  utter_happy:
-  - text: "Great, carry on!"
-
+    - text: "Hello! Welcome to the cinema bot. How can I help you today?"
   utter_goodbye:
-  - text: "Bye"
-
+    - text: "Goodbye! Have a great day!"
   utter_iamabot:
-  - text: "I am a bot, powered by Rasa."
+    - text: "I’m a bot here to help you with movie info. What’s on your mind?"
+  utter_ask_another_question:
+    - text: "Anything else I can help you with?"
+  utter_fallback:
+    - text: "Sorry, I didn't understand that. Can you rephrase your question?"
+  utter_help:
+    - text: "I can help you with movie showtimes, cast, ratings, ticket prices, and more. Just ask!"
 
-session_config:
-  session_expiration_time: 60
-  carry_over_slots_to_new_session: true
+actions:
+  - action_greet
+  - action_goodbye
+  - action_help
+  - action_bot_challenge
+  - action_affirm
+  - action_deny
+  - action_fallback
+  - action_ask_movie_showtimes
+  - action_ask_movie_cast
+  - action_ask_movie_director
+  - action_ask_movie_rating
+  - action_ask_movie_genre
+  - action_ask_movie_location
+  - action_ask_ticket_validity
+  - action_ask_movie_info
+  - action_ask_release_date
+  - action_ask_ticket_price
+  - action_ask_movie_duration
+  - action_ask_movie_availability
+  - action_ask_movie_language
+  - action_ask_movie_subtitles
+  - action_ask_movie_suitable
+  - action_ask_genre_recommendation
+  - action_ask_family_friendly
+  - action_ask_movie_theater_availability
+  - action_ask_user_rating
+  - action_ask_current_movies
+  - action_ask_upcoming_releases
+  - action_ask_top_rated_movies
+  - action_ask_movie_festivals
+  - action_ask_movie_summary
+  - action_ask_kid_friendly_movies
+  - action_ask_streaming_platform
+  - action_ask_3d_availability
