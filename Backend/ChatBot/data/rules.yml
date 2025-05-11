@@ -1,13 +1,218 @@
 version: "3.1"
 
 rules:
+  - rule: Say greeting when user greets
+    steps:
+      - intent: greet
+      - action: utter_greet
 
-- rule: Say goodbye anytime the user says goodbye
-  steps:
-  - intent: goodbye
-  - action: utter_goodbye
+  - rule: Say goodbye when user says goodbye
+    steps:
+      - intent: goodbye
+      - action: utter_goodbye
 
-- rule: Say 'I am a bot' anytime the user challenges
-  steps:
-  - intent: bot_challenge
-  - action: utter_iamabot
+  - rule: Respond to bot challenge
+    steps:
+      - intent: bot_challenge
+      - action: utter_iamabot
+
+  - rule: Activate fallback
+    steps:
+      - intent: fallback
+      - action: utter_fallback
+
+  - rule: Ask about movie showtimes
+    steps:
+      - intent: ask_movie_showtimes
+      - action: action_ask_movie_showtimes
+      - action: utter_ask_another_question
+
+  - rule: Ask about movie cast
+    steps:
+      - intent: ask_movie_cast
+      - action: action_ask_movie_cast
+      - action: utter_ask_another_question
+
+  - rule: Ask about movie director
+    steps:
+      - intent: ask_movie_director
+      - action: action_ask_movie_director
+      - action: utter_ask_another_question
+
+  - rule: Ask about movie rating
+    steps:
+      - intent: ask_movie_rating
+      - action: action_ask_movie_rating
+      - action: utter_ask_another_question
+
+  - rule: Ask about movie genre
+    steps:
+      - intent: ask_movie_genre
+      - action: action_ask_movie_genre
+      - action: utter_ask_another_question
+
+  - rule: Ask for movie location if movie name not provided
+    condition:
+      - slot_was_set:
+          - movie_name: null
+    steps:
+      - intent: ask_movie_location
+      - action: action_ask_movie_location
+
+  - rule: Provide movie location if movie name provided
+    condition:
+      - slot_was_set:
+          - movie_name
+    steps:
+      - intent: ask_movie_location
+      - action: action_ask_movie_location
+      - action: utter_ask_another_question
+
+  - rule: Ask about ticket validity
+    steps:
+      - intent: ask_ticket_validity
+      - action: action_ask_ticket_validity
+      - action: utter_ask_another_question
+
+  - rule: Ask about movie info
+    steps:
+      - intent: ask_movie_info
+      - action: action_ask_movie_info
+      - action: utter_ask_another_question
+
+  - rule: Ask about release date
+    steps:
+      - intent: ask_release_date
+      - action: action_ask_release_date
+      - action: utter_ask_another_question
+
+  - rule: Ask about ticket price
+    steps:
+      - intent: ask_ticket_price
+      - action: action_ask_ticket_price
+      - action: utter_ask_another_question
+
+  - rule: Ask about movie duration
+    steps:
+      - intent: ask_movie_duration
+      - action: action_ask_movie_duration
+      - action: utter_ask_another_question
+
+  - rule: Ask about movie availability
+    steps:
+      - intent: ask_movie_availability
+      - action: action_ask_movie_availability
+      - action: utter_ask_another_question
+
+  - rule: Ask about movie language
+    steps:
+      - intent: ask_movie_language
+      - action: action_ask_movie_language
+      - action: utter_ask_another_question
+
+  - rule: Ask about movie subtitles
+    steps:
+      - intent: ask_movie_subtitles
+      - action: action_ask_movie_subtitles
+      - action: utter_ask_another_question
+
+  - rule: Ask about movie suitability
+    steps:
+      - intent: ask_movie_suitable
+      - action: action_ask_movie_suitable
+      - action: utter_ask_another_question
+
+  - rule: Ask for genre if not provided
+    condition:
+      - slot_was_set:
+          - genre: null
+    steps:
+      - intent: ask_genre_recommendation
+      - action: action_ask_genre_recommendation
+
+  - rule: Provide genre recommendation
+    condition:
+      - slot_was_set:
+          - genre
+    steps:
+      - intent: ask_genre_recommendation
+      - action: action_ask_genre_recommendation
+      - action: utter_ask_another_question
+
+  - rule: Handle genre input
+    steps:
+      - intent: inform_genre
+      - action: action_ask_genre_recommendation
+      - action: utter_ask_another_question
+
+  - rule: Ask for family-friendly movies
+    steps:
+      - intent: ask_family_friendly
+      - action: action_ask_family_friendly
+      - action: utter_ask_another_question
+
+  - rule: Ask about movie theater availability
+    steps:
+      - intent: ask_movie_theater_availability
+      - action: action_ask_movie_theater_availability
+      - action: utter_ask_another_question
+
+  - rule: Ask for user rating
+    steps:
+      - intent: ask_user_rating
+      - action: action_ask_user_rating
+      - action: utter_ask_another_question
+
+  - rule: Ask about current movies
+    steps:
+      - intent: ask_current_movies
+      - action: action_ask_current_movies
+      - action: utter_ask_another_question
+
+  - rule: Ask about upcoming releases
+    steps:
+      - intent: ask_upcoming_releases
+      - action: action_ask_upcoming_releases
+      - action: utter_ask_another_question
+
+  - rule: Ask about top-rated movies
+    steps:
+      - intent: ask_top_rated_movies
+      - action: action_ask_top_rated_movies
+      - action: utter_ask_another_question
+
+  - rule: Ask about movie festivals
+    steps:
+      - intent: ask_movie_festivals
+      - action: action_ask_movie_festivals
+      - action: utter_ask_another_question
+
+  - rule: Ask for movie summary
+    steps:
+      - intent: ask_movie_summary
+      - action: action_ask_movie_summary
+      - action: utter_ask_another_question
+
+  - rule: Ask for kid-friendly movies
+    steps:
+      - intent: ask_kid_friendly_movies
+      - action: action_ask_kid_friendly_movies
+      - action: utter_ask_another_question
+
+  - rule: Ask about streaming platforms
+    steps:
+      - intent: ask_streaming_platform
+      - action: action_ask_streaming_platform
+      - action: utter_ask_another_question
+
+  - rule: Ask about 3D availability
+    steps:
+      - intent: ask_3d_availability
+      - action: action_ask_3d_availability
+      - action: utter_ask_another_question
+
+  - rule: Handle movie name input
+    steps:
+      - intent: inform_movie_name
+      - action: action_ask_movie_location
+      - action: utter_ask_another_question
