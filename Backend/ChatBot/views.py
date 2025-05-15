@@ -10,7 +10,7 @@ from Users.models import User
 from django.utils import timezone
 
 class ChatbotMessageView(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
         user_message = request.data.get('message')

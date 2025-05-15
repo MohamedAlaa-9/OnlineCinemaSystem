@@ -28,3 +28,4 @@ class Ticket(models.Model):
     qr_code = models.ImageField(null=True, blank=True, upload_to='QR-Code/') #this qr code will contain the stripe transaction id to make employee scan it and check
     is_verified = models.BooleanField(default=False)
     verify_code = models.CharField(max_length=10, unique=True)
+    pdf_url = models.URLField(null=True, blank=True)
