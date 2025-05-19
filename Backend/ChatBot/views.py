@@ -17,11 +17,11 @@ class ChatbotMessageView(APIView):
         if not user_message:
             return Response({"error": "Message is required."}, status=status.HTTP_400_BAD_REQUEST)
         payload = {"sender": request.user.username, "message": user_message}
-        response = requests.post("http://localhost:5005/webhooks/rest/webhook", json=payload)
+        response = requests.post("http://0.0.0.0:5005", json=payload)
         if response.status_code != 200:
             return Response({"error": "Failed to get a response from the chatbot."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        identify_user = response.json()
-        user = User.objects.get(username=identify_user[0]['recipient_id']).id
+        
+        user = User.objects.get(username=response.json()[0]['recipient_id']).id
         chatbot = ChatBot.objects.create(user=request.user,
                                           message=user_message,
                                           response=response.json()[0]['text'],

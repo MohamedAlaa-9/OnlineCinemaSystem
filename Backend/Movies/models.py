@@ -18,6 +18,7 @@ class Movie(models.Model):
     director = models.TextField()
     trailer_url = models.TextField()
     seats_available = models.PositiveIntegerField()
+    ticket_price = models.DecimalField(max_digits=10, decimal_places=2, default=10.00)
     total_seats = models.PositiveIntegerField(default=100)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -31,9 +32,9 @@ class Showtime(models.Model):
     
 class CinemaHall(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, default='Cinema Hall')
     total_seats = models.PositiveIntegerField()
-    location = models.CharField(max_length=255, default='Cinema_Hall No.1')  # optional: physical location
+    location = models.CharField(max_length=255, default='Cinema_Hall No.1')
 
 class Review(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

@@ -15,12 +15,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-r0f3@1_euv%fb+$-5smo&v)3y-#ftlnq+3#*y(z@m-*+e415=i"
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = []
+BASE_URL = os.getenv('BASE_URL')
+ALLOWED_HOSTS = ['6159-156-209-37-159.ngrok-free.app', '127.0.0.1', 'localhost',]
 
 
 # Application definition
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'ChatBot',
     'Bookings',
 ]
+
 
 AUTH_USER_MODEL = 'Users.User'
 
@@ -161,3 +162,6 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOW_ALL_ORIGINS = True
+STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

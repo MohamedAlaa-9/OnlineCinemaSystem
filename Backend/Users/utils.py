@@ -1,11 +1,17 @@
+"""
+    utils.py
+    This module contains utility functions for user registration, email verification,
+    and password reset functionalities.
+    It includes functions to generate verification and reset links, send emails using
+    Brevo API, and handle token generation.
+"""
+import json
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.urls import reverse
 import requests
-import json
-from Project import settings
 
 
 def generate_verification_token(user):

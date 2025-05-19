@@ -1,22 +1,23 @@
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from django.conf import settings
 from django.shortcuts import reverse
 import stripe
-from Users.models import Profile
-from Movies.models import  Showtime, Movie
-from Bookings.models import Booking, Ticket, Showtime, CinemaHall
+from Bookings.models import Booking, Ticket
+from Movies.models import Showtime, CinemaHall
+from django.http import HttpResponse
+from django.views import View
 import json
-import stripe
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views import View
 from django.shortcuts import get_object_or_404
+from .utlis import TicketPDFGenerator
 from django.http import FileResponse, Http404
-from utlis import TicketPDFGenerator
-
+import os
+from Movies.models import Movie, CinemaHall, Showtime
 stripe.api_key = settings.STRIPE_API_KEY
 
 class StripeCheckoutView(APIView):
@@ -26,25 +27,25 @@ class StripeCheckoutView(APIView):
         try:
             showtime_id = request.data.get('showtime_id')
             quantity = int(request.data.get('quantity', 1))
+            price_id = 'price_1RJitkCAQaB8IpsnHtgWKKTI' #TODO: Change it dynamically based on the movie price via products in the stripe
+            if not showtime_id or not price_id:
+                return Response({"error": "Showtime ID and Price ID are required."}, status=status.HTTP_400_BAD_REQUEST)
 
-            if not showtime_id:
-                return Response({"error": "Showtime ID is required."}, status=status.HTTP_400_BAD_REQUEST)
-
-            # Fetch showtime
-            try:
-                showtime = Showtime.objects.get(id=showtime_id)
-            except Showtime.DoesNotExist:
-                return Response({"error": "Showtime not found."}, status=status.HTTP_404_NOT_FOUND)
+            showtime = get_object_or_404(Showtime, id=showtime_id)
 
             if showtime.available_seats < quantity:
                 return Response({"error": "Not enough seats available."}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Stripe price_id for movie ticket (you should dynamically map this in production)
-            price_id = request.data.get('price_id')  # Frontend should send correct Stripe price_id
-            if not price_id:
-                return Response({"error": "Stripe Price ID is required."}, status=status.HTTP_400_BAD_REQUEST)
-
-            # Create Stripe Checkout Session
+            # Create a pending booking before checkout
+            booking = Booking.objects.create(
+                user=request.user,
+                showtime=showtime,
+                tickets_count=quantity,
+                total_price=0,
+                status='Pending'
+            )
+            
+            # Create Stripe session with metadata
             checkout_session = stripe.checkout.Session.create(
                 line_items=[
                     {
@@ -52,24 +53,12 @@ class StripeCheckoutView(APIView):
                         'quantity': quantity,
                     },
                 ],
-                payment_method_types=['card'],
                 mode='payment',
                 customer_email=request.user.email,
-                success_url=f'{settings.BASE_URL}{reverse("payment_successful")}?session_id={{CHECKOUT_SESSION_ID}}',
-                cancel_url=f'{settings.BASE_URL}{reverse("payment_cancelled")}',
-            )
-
-            # Reserve seats temporarily
-            showtime.available_seats -= quantity
-            showtime.save()
-
-            # Create booking with pending status
-            booking = Booking.objects.create(
-                user=request.user,
-                showtime=showtime,
-                tickets_count=quantity,
-                total_price=0,  # Will be set after payment success via webhook
-                status='Pending'
+                payment_method_types=['card'],
+                success_url = f"{settings.BASE_URL}{reverse('ticket_download', args=[str(booking.id)])}?session_id={{CHECKOUT_SESSION_ID}}",
+                cancel_url = f"{settings.BASE_URL}{reverse('payment_cancelled')}",
+                metadata={'booking_id': str(booking.id)}
             )
 
             return Response({"checkout_url": checkout_session.url}, status=status.HTTP_200_OK)
@@ -78,81 +67,105 @@ class StripeCheckoutView(APIView):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+class PaymentCancelledView(View):
+    def get(self, request):
+        return HttpResponse("Payment was cancelled. Please try again.")
 
 class StripeWebhookView(View):
     @csrf_exempt
     def post(self, request, *args, **kwargs):
         payload = request.body
-        sig_header = request.META['HTTP_STRIPE_SIGNATURE']
-        endpoint_secret = stripe.api_key
-        event = None
-        
-        try:
-            # Verify the webhook signature
-            event = stripe.Webhook.construct_event(
-                payload, sig_header, endpoint_secret
-            )
-        except ValueError as e:
-            # Invalid payload
-            return JsonResponse({'error': 'Invalid payload'}, status=400)
-        except stripe.error.SignatureVerificationError as e:
-            # Invalid signature
-            return JsonResponse({'error': 'Invalid signature'}, status=400)
+        sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+        endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
 
-        # Handle the event types you need
+        try:
+            event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
+        except (ValueError, stripe.error.SignatureVerificationError):
+            return JsonResponse({'error': 'Webhook signature verification failed'}, status=400)
+
         if event['type'] == 'checkout.session.completed':
-            session = event['data']['object']  # contains a stripe checkout session object
-            
-            # Find the booking from the session's metadata
+            session = event['data']['object']
             booking_id = session.get('metadata', {}).get('booking_id')
             if not booking_id:
-                return JsonResponse({'error': 'No booking_id in metadata'}, status=400)
-                
+                return JsonResponse({'error': 'Missing booking ID in metadata'}, status=400)
+
             booking = get_object_or_404(Booking, id=booking_id)
 
-            # Check the payment status
             if session['payment_status'] == 'paid':
-                # Update booking status to Success
                 booking.status = 'Success'
-                booking.total_price = session['amount_total'] / 100.0  # Convert to actual price in currency
+                booking.total_price = session['amount_total'] / 100
                 booking.save()
 
-                # Create ticket entries
+
+        return JsonResponse({'status': 'success'}, status=200)
+
+
+
+class DownloadTicketView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, booking_id):
+        session_id = request.query_params.get('session_id')
+        if not session_id:
+            return Response({'error': 'Missing session_id'}, status=400)
+
+        try:
+            # 1. Verify Stripe session
+            session = stripe.checkout.Session.retrieve(session_id)
+            customer_email = session.customer_email
+
+            # 2. Find related booking
+            booking = Booking.objects.get(id=booking_id, user=request.user)
+            if not booking:
+                return Response({'error': 'Booking not found'}, status=404)
+
+            # 3. Only proceed if payment succeeded
+            if booking.status != 'Success':
+                # Try to confirm it from Stripe if webhook didn’t run
+                if session.payment_status == 'paid':
+                    booking.status = 'Success'
+                    booking.total_price = session.amount_total / 100
+                    booking.save()
+                else:
+                    return Response({'error': 'Payment not confirmed yet'}, status=400)
+
+            # 4. If no tickets, generate them here immediately
+            tickets = Ticket.objects.filter(booking=booking)
+            if not tickets.exists():
                 showtime = booking.showtime
-                for _ in range(booking.tickets_count):
+                for i in range(booking.tickets_count):
+                    seat_number = showtime.available_seats - 1 - i
                     ticket = Ticket.objects.create(
                         user=booking.user,
                         booking=booking,
                         movie=showtime.movie,
                         cinema_hall=showtime.cinema_hall,
-                        seat_number=showtime.available_seats - 1,  # Decrease available seats
+                        seat_number=seat_number,
                         showtime=showtime,
-                        price=booking.total_price / booking.tickets_count,  # Divide price by ticket count
-                        qr_code=None,  # Generate QR code in the next step
-                        is_verified=False,
-                        verify_code="Generate a random code here"
+                        #price=booking.total_price / booking.tickets_count,
+                        verify_code=f"VERIFY-{booking.id}-{i}"
                     )
-                    # Update available seats for the showtime
-                    showtime.available_seats -= 1
-                    showtime.save()
+                    ticket.save()
+                showtime.available_seats -= booking.tickets_count
+                showtime.save()
+                tickets = Ticket.objects.filter(booking=booking)
 
-                # Update booked movies for the user
-                booked_movie = booking.showtime.movie
-                Profile.booked_tickets.add(booked_movie)
+            # 5. Generate ticket PDFs
+            download_links = []
+            for ticket in tickets:
+                file_path = TicketPDFGenerator(ticket).build()
+                filename = os.path.basename(file_path)
+                download_url = f"{settings.BASE_URL}{file_path}"
+                download_links.append(download_url)
 
-        # Return a response acknowledging receipt of the event
-        return JsonResponse({'status': 'success'}, status=200)
+            return Response({
+                "message": f"{len(download_links)} ticket(s) ready",
+                "download_links": download_links
+            })
 
+        except stripe.error.StripeError as e:
+            return Response({'error': f'Stripe error: {str(e)}'}, status=400)
+        except Exception as e:
+            return Response({'error': str(e)}, status=500)
 
-class DownloadTickets(APIView):
-    def get(self, request, booking_id):
-        tickets = Ticket.objects.filter(booking_id=booking_id, user=request.user)
-        if not tickets.exists():
-            raise Http404("No tickets found.")
-        ticket_pdf = TicketPDFGenerator(tickets, poster_url=tickets[0].movie.poster_url).generate_pdf()
-        saving = TicketPDFGenerator(tickets, poster_url=tickets[0].movie.poster_url).save_to_storage()
-        if not saving:
-            raise Http404("Failed to save PDF.")
-        
-        pdf_path = 
-        return FileResponse(open(pdf_path, 'rb'), content_type='application/pdf')
+#TODO: Don't Miss to change session_id with {CECKOUT_SESSION_ID} in the success_url

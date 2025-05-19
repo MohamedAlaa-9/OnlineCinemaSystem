@@ -18,13 +18,9 @@ class User(AbstractUser):
     groups = models.ManyToManyField(
         Group, related_name="user_groups"
     )
-
-
-
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user_profile')
     booked_tickets = models.PositiveIntegerField(default=0)
-    profile_photo = models.ImageField(upload_to='profiles/', null=True, blank=True)
+
+
 
 class Admin(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

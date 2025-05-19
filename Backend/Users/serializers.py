@@ -1,9 +1,15 @@
+""" 
+    serializers.py 
+    This module contains serializers for user registration, profile, and password change functionalities.
+    It includes serializers for user registration, user profile, and password change.
+"""
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from Bookings.models import Booking
 
 User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
+    """Serializer for User Registration"""
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'password', 'first_name', 'last_name']
@@ -20,6 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    """Serializer for User Profile"""
     booked_tickets = serializers.SerializerMethodField()
     change_password_link = serializers.SerializerMethodField()
 
@@ -28,8 +35,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = ['username', 'email', 'first_name', 'last_name', 'profile_photo', 'date_joined', 'last_login', 'booked_tickets', 'change_password_link']
 
     def get_booked_tickets(self, obj):
+        """Get booked tickets for the user"""
         bookings = Booking.objects.filter(user=obj)
         return [{'movie_title': b.movie_title, 'booked_at': b.booked_at} for b in bookings]
 
     def get_change_password_link(self, obj):
+        """Get change password link for the user"""
         return "http://127.0.0.1:8000/api/users/change-password/"

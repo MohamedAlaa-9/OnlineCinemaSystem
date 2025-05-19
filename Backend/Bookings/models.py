@@ -24,8 +24,7 @@ class Ticket(models.Model):
     cinema_hall = models.ForeignKey('Movies.CinemaHall', on_delete=models.CASCADE, related_name='cinema_hall_ticket')
     seat_number = models.PositiveIntegerField()
     showtime = models.ForeignKey('Movies.Showtime', on_delete=models.CASCADE, related_name='showtime_ticket')
-    price = models.DecimalField(max_digits=10, decimal_places=2, default=20)
     qr_code = models.ImageField(null=True, blank=True, upload_to='QR-Code/') #this qr code will contain the stripe transaction id to make employee scan it and check
     is_verified = models.BooleanField(default=False)
-    verify_code = models.CharField(max_length=10, unique=True)
+    verify_code = models.CharField(max_length=250, unique=True)
     pdf_url = models.URLField(null=True, blank=True)
