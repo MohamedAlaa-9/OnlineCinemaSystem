@@ -3,8 +3,7 @@ version: "3.1"
 language: en
 
 pipeline:
-- name: SpacyNLP
-  model: "en_core_web_md"
+
 - name: WhitespaceTokenizer
 - name: RegexFeaturizer
 - name: LexicalSyntacticFeaturizer

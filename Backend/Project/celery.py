@@ -1,7 +1,6 @@
 import os
-from celery.schedules import crontab
-
 from celery import Celery
+from celery.schedules import crontab
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Project.settings')
 
@@ -13,11 +12,11 @@ app.autodiscover_tasks()
 
 
 app.conf.beat_schedule = {
-    'fetch-movies-every-2-days': {
+    'fetch-movies-every-minute': {
         'task': 'Movies.tasks.movie_scrap',
-        'schedule': crontab(day_of_week=0, hour=0, minute=1),
+        'schedule': crontab(minute='*/1'),  # Every 1 minute
     },
 }
-@app.task(bind=True, ignore_result=True)
+@app.task(bind=True)
 def debug_task(self):
     print(f'Request: {self.request!r}')
