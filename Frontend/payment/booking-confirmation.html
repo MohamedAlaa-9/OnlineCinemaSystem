@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation - CinemaPlus</title>
+    <link href="../bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <!-- Background Pattern -->
+    <div class="cinema-pattern"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html"><i class="fas fa-film me-2"></i>CinemaPlus</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html"><i class="fas fa-home me-1"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../movies/movies.html"><i class="fas fa-video me-1"></i> Movies</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../user/register.html"><i class="fas fa-user-plus me-1"></i> Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../user/login.html"><i class="fas fa-sign-in-alt me-1"></i> Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1><i class="fas fa-check-circle me-2"></i> Booking Confirmation</h1>
+        </div>
+    </div>
+
+    <!-- Confirmation Section -->
+    <div class="container my-5 fade-in">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0"><i class="fas fa-check-circle me-2"></i>Booking Successful!</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-ticket-alt fa-4x text-success mb-3"></i>
+                            <h3 class="text-white">Thank you for your booking!</h3>
+                            <p class="text-white">Your tickets have been reserved. Please check your email for confirmation.</p>
+                        </div>
+                        
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Booking Details</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-4 fw-bold text-white">Movie:</div>
+                                    <div class="col-md-8 text-white" id="confirmMovie">Avengers: Endgame</div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-4 fw-bold text-white">Date:</div>
+                                    <div class="col-md-8 text-white" id="confirmDate">May 20, 2025</div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-4 fw-bold text-white">Time:</div>
+                                    <div class="col-md-8 text-white" id="confirmTime">10:00 AM</div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-4 fw-bold text-white">Number of Tickets:</div>
+                                    <div class="col-md-8 text-white" id="confirmTickets">2</div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-4 fw-bold text-white">Seats:</div>
+                                    <div class="col-md-8 text-white" id="confirmSeats">F5, F6</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4 fw-bold text-white">Total:</div>
+                                    <div class="col-md-8 text-white" id="confirmTotal">$24.00</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Booking ID</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center">
+                                    <h4 class="text-white" id="bookingId">CP-2023-05-20-12345</h4>
+                                    <p class="text-muted">Please keep this ID for reference</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <a href="../index.html" class="btn btn-primary"><i class="fas fa-home me-2"></i>Return to Homepage</a>
+                            <button class="btn btn-outline-primary" onclick="window.print()"><i class="fas fa-print me-2"></i>Print Confirmation</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-5 mb-4 mb-md-0">
+                    <h5><i class="fas fa-film me-2"></i>Cinema</h5>
+                    <p class="small">Your ultimate movie experience with premium comfort and the latest blockbusters.</p>
+                    <ul class="list-inline mb-0">
+                        <li class="list-inline-item"><a href="https://www.facebook.com/cinema" class="text-white"><i class="fab fa-facebook fa-lg mx-2"></i></a></li>
+                        <li class="list-inline-item"><a href="https://x.com/cinema" class="text-white"><i class="fab fa-twitter fa-lg mx-2"></i></a></li>
+                        <li class="list-inline-item"><a href="https://www.instagram.com/cinema" class="text-white"><i class="fab fa-instagram fa-lg mx-2"></i></a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h6>Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="../index.html" class="text-white">Home</a></li>
+                        <li><a href="../movies/movies.html" class="text-white">Movies</a></li>
+                        <li><a href="../user/register.html" class="text-white">Register</a></li>
+                        <li><a href="../user/login.html" class="text-white">Login</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h6>Contact Us</h6>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-map-marker-alt me-2"></i>123 Cinema Street, City</li>
+                        <li><i class="fas fa-phone me-2"></i>(123) 456-7890</li>
+                        <li><i class="fas fa-envelope me-2"></i>info@cinemaplus.com</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p class="small mb-0">&copy; 2025 Cinema. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../bootstrap.bundle.min.js"></script>
+    <script src="booking-confirmation.js"></script>
+</body>
+</html>

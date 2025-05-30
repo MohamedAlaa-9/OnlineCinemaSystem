@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Online Cinema</title>
+    <link href="../bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <!-- Background Pattern -->
+    <div class="cinema-pattern"></div>
+
+    <!-- Navbar with Logout -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html"><i class="fas fa-film me-2"></i>Cinema</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html"><i class="fas fa-home me-1"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="movies.html"><i class="fas fa-video me-1"></i> Movies</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="tickets.html"><i class="fas fa-ticket-alt me-1"></i> My Tickets</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="https://via.placeholder.com/30" alt="Profile" id="navProfilePic" class="rounded-circle me-1" width="30" height="30">
+                            <span id="navUsername">JohnDoe</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item active" href="profile.html"><i class="fas fa-user me-2"></i>My Profile</a></li>
+                            <li><a class="dropdown-item" href="tickets.html"><i class="fas fa-ticket-alt me-2"></i>My Tickets</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1><i class="fas fa-user-circle me-2"></i> My Profile</h1>
+        </div>
+    </div>
+
+    <!-- Profile View -->
+    <div class="container my-5 fade-in">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card shadow">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <img src="https://via.placeholder.com/150" alt="Profile Photo" id="profilePhoto" class="rounded-circle img-fluid profile-photo" style="max-width: 150px;">
+                        </div>
+                        <h4 id="profileName" style="color: white;">Hassan</h4>
+                        <p class="text-white" id="profileUsername">@hassan</p>
+                        <div class="d-grid gap-2 mt-3">
+                            <label for="photoInput" class="btn btn-outline-primary"><i class="fas fa-camera me-2"></i>Change Photo</label>
+                            <input type="file" id="photoInput" accept="image/*" style="display: none;">
+                            <a href="resend-verification.html" class="btn btn-outline-secondary"><i class="fas fa-key me-2"></i>Change Password</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h4 class="mb-0"><i class="fas fa-info-circle me-2"></i>Profile Information</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <p class="mb-0 fw-bold" style="color: white;">Username:</p>
+                            </div>
+                            <div class="col-sm-8">
+                                <p class="text-white mb-0" id="infoUsername">Hassan</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <p class="mb-0 fw-bold" style="color: white;">Email:</p>
+                            </div>
+                            <div class="col-sm-8">
+                                <p class="text-white mb-0" id="infoEmail">hassan.doe@example.com</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <p class="mb-0 fw-bold" style="color: white;">First Name:</p>
+                            </div>
+                            <div class="col-sm-8">
+                                <p class="text-white mb-0" id="infoFirstName">Hassan</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <p class="mb-0 fw-bold" style="color: white;">Last Name:</p>
+                            </div>
+                            <div class="col-sm-8">
+                                <p class="text-white mb-0" id="infoLastName">Adel</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <p class="mb-0 fw-bold" style="color: white;">Date Joined:</p>
+                            </div>
+                            <div class="col-sm-8">
+                                <p class="text-white mb-0" id="infoDateJoined">May 15, 2025</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <p class="mb-0 fw-bold" style="color: white;">Last Login:</p>
+                            </div>
+                            <div class="col-sm-8">
+                                <p class="text-white mb-0" id="infoLastLogin">Today at 10:30 AM</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h4 class="mb-0"><i class="fas fa-ticket-alt me-2"></i>Booked Tickets</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Movie</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Seats</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ticketsTable">
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://via.placeholder.com/40x60" alt="Movie" class="me-2" style="width: 40px; height: 60px; object-fit: cover;">
+                                                <span>Avengers: Endgame</span>
+                                            </div>
+                                        </td>
+                                        <td>May 20, 2023</td>
+                                        <td>7:30 PM</td>
+                                        <td>A12, A13</td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://via.placeholder.com/40x60" alt="Movie" class="me-2" style="width: 40px; height: 60px; object-fit: cover;">
+                                                <span>The Batman</span>
+                                            </div>
+                                        </td>
+                                        <td>May 25, 2023</td>
+                                        <td>8:00 PM</td>
+                                        <td>C5, C6, C7</td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="tickets.html" class="btn btn-outline-primary"><i class="fas fa-ticket-alt me-2"></i>View All Tickets</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <h5><i class="fas fa-film me-2"></i>Cinema</h5>
+                    <p class="small">Your ultimate movie experience</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <ul class="list-inline mb-0">
+                        <li class="list-inline-item"><a href="https://www.facebook.com/cinema" class="text-white"><i class="fab fa-facebook fa-lg mx-2"></i></a></li>
+                        <li class="list-inline-item"><a href="https://x.com/cinema" class="text-white"><i class="fab fa-twitter fa-lg mx-2"></i></a></li>
+                        <li class="list-inline-item"><a href="https://www.instagram.com/cinema" class="text-white"><i class="fab fa-instagram fa-lg mx-2"></i></a></li>
+                    </ul>
+                    <p class="small mt-2">&copy; 2025 Cinema. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../bootstrap.bundle.min.js"></script>
+    <script src="profile.js"></script>
+</body>
+</html>
