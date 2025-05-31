@@ -13,7 +13,7 @@ class Home(APIView):
     permission_classes = [AllowAny]
     
     def get(self, request):
-        movies = Movie.objects.all().order_by('-release_date')[:15]
+        movies = Movie.objects.all().order_by('-release_date')[:16]
         serializer = MovieSerializer(movies, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
