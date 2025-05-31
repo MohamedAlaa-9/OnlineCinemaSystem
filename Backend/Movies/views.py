@@ -8,15 +8,21 @@ from .models import Movie, Review, Showtime
 from random import randint
 import uuid
 from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
+
+class CustomPagination(PageNumberPagination):
+    page_size = 16
+    page_query_param = 'page'
 
 class Home(APIView):
     permission_classes = [AllowAny]
-    
-    def get(self, request):
-        movies = Movie.objects.all().order_by('-release_date')[:16]
-        serializer = MovieSerializer(movies, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
+    def get(self, request):
+        movies = Movie.objects.all().order_by('-release_date')
+        paginator = CustomPagination()
+        paginated_qs = paginator.paginate_queryset(movies, request)
+        serializer = MovieSerializer(paginated_qs, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
 class MovieDetails(APIView):
     permission_classes = [IsAuthenticated]
