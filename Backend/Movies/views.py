@@ -3,8 +3,8 @@ from .serializers import MovieSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .serializers import MovieSerializer,MovieDetailsSerializer, ReviewSerializer
-from .models import Movie, Review
+from .serializers import MovieSerializer,MovieDetailsSerializer, ReviewSerializer, ShowtimesSerializer
+from .models import Movie, Review, Showtime
 from random import randint
 import uuid
 from rest_framework import status
@@ -63,3 +63,15 @@ class MovieReviewView(APIView):
             review = serializer.save(movie=movie, user=request.user)
             return Response(ReviewSerializer(review).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class MovieShowtimeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, title):
+        try:
+            movie = Movie.objects.get(title=title)
+        except Movie.DoesNotExist:
+            return Response({"error": "Movie not found"}, status=status.HTTP_404_NOT_FOUND)
+        showtimes = Showtime.objects.filter(movie=movie)
+        serializer = ShowtimesSerializer(showtimes, many= True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
