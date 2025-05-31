@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Details - CinemaPlus</title>
+    <link href="../bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <!-- Background Pattern -->
+    <div class="cinema-pattern"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html"><i class="fas fa-film me-2"></i>Cinema</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html"><i class="fas fa-home me-1"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="movies.html"><i class="fas fa-video me-1"></i> Movies</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../user/register.html"><i class="fas fa-user-plus me-1"></i> Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../user/login.html"><i class="fas fa-sign-in-alt me-1"></i> Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Movie Detail Section -->
+    <div class="container my-5 fade-in">
+        <div class="row">
+            <!-- Movie Poster -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow">
+                    <img src="https://via.placeholder.com/600x900" class="card-img-top" alt="Movie Poster" id="moviePoster">
+                    <div class="card-body text-center">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <span class="badge bg-primary me-2"><i class="fas fa-star me-1"></i><span id="movieRating">8.5</span></span>
+                                <span class="text-white" id="movieDuration">3h 1m</span>
+                            </div>
+                            <span class="text-white" id="movieYear">2023</span>
+                        </div>
+                        <div class="d-grid">
+                            <a href="#booking-section" class="btn btn-primary"><i class="fas fa-ticket-alt me-2"></i>Book Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Movie Details -->
+            <div class="col-md-8">
+                <h1 class="mb-3 text-white" id="movieTitle">Avengers: Endgame</h1>
+                <p class="text-white mb-4" id="movieGenres">Action, Adventure, Sci-Fi</p>
+                
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h4 class="mb-0"><i class="fas fa-info-circle me-2"></i>Synopsis</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-white" id="movieSynopsis">
+                            After the devastating events of Avengers: Infinity War, the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h4 class="mb-0"><i class="fas fa-film me-2"></i>Details</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-3 fw-bold text-white">Director:</div>
+                            <div class="col-md-9 text-white" id="movieDirector">Anthony Russo, Joe Russo</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-3 fw-bold text-white">Cast:</div>
+                            <div class="col-md-9 text-white" id="movieCast">Robert Downey Jr., Chris Evans, Mark Ruffalo, Chris Hemsworth, Scarlett Johansson</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-3 fw-bold text-white">Release Date:</div>
+                            <div class="col-md-9 text-white" id="movieReleaseDate">April 26, 2019</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 fw-bold text-white">Language:</div>
+                            <div class="col-md-9 text-white" id="movieLanguage">English</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h4 class="mb-0"><i class="fas fa-play me-2"></i>Trailer</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="ratio ratio-16x9">
+                            <iframe src="https://www.youtube.com/embed/TcMBFSGVi1c" title="Movie Trailer" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Booking Section (Cart Style) -->
+        <div id="booking-section" class="mt-5">
+            <h2 class="mb-4 text-white"><i class="fas fa-shopping-cart me-2"></i>Your Cart</h2>
+            
+            <div class="card shadow">
+                <div class="card-header">
+                    <h4 class="mb-0">Book Tickets</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Date and Time Selection -->
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label class="form-label text-white">Select Date:</label>
+                            <select class="form-select" id="dateSelect">
+                                <option value="2023-05-20">Today (May 20)</option>
+                                <option value="2023-05-21">Tomorrow (May 21)</option>
+                                <option value="2023-05-22">May 22</option>
+                                <option value="2023-05-23">May 23</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white">Select Time:</label>
+                            <select class="form-select" id="timeSelect">
+                                <option value="10:00 AM">10:00 AM</option>
+                                <option value="1:30 PM">1:30 PM</option>
+                                <option value="4:45 PM">4:45 PM</option>
+                                <option value="8:00 PM">8:00 PM</option>
+                                <option value="10:30 PM">10:30 PM</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Cart Item -->
+                    <div class="cart-item">
+                        <div class="row align-items-center">
+                            <div class="col-md-2 mb-3 mb-md-0">
+                                <img src="https://via.placeholder.com/100x150" id="cartMoviePoster" class="img-fluid rounded" alt="Movie Poster">
+                            </div>
+                            <div class="col-md-4 mb-3 mb-md-0">
+                                <h5 class="text-white" id="cartMovieTitle">Avengers: Endgame</h5>
+                                <p class="text-white mb-0" id="cartMovieDetails">3h 1m | PG-13</p>
+                                <p class="text-white mb-0" id="cartDateTime">May 20, 2023 | 10:00 AM</p>
+                            </div>
+                            <div class="col-md-3 mb-3 mb-md-0">
+                                <div class="ticket-counter">
+                                    <button id="decreaseTickets"><i class="fas fa-minus"></i></button>
+                                    <span id="ticketCount">2</span>
+                                    <button id="increaseTickets"><i class="fas fa-plus"></i></button>
+                                </div>
+                                <p class="text-center text-white mb-0">$12.00 per ticket</p>
+                            </div>
+                            <div class="col-md-3 text-end">
+                                <h5 class="text-white" id="itemTotal">$24.00</h5>
+                                <div class="seat-info">
+                                    <span class="text-white">Available seats:</span>
+                                    <span class="available-seats" id="availableSeats">148</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Cart Total -->
+                    <div class="cart-total">
+                        Total: <span id="cartTotal">$24.00</span>
+                    </div>
+                    
+                    <!-- Checkout Button -->
+                    <div class="d-grid">
+                        <a href="../payment/payment.html" id="checkoutBtn" class="btn btn-primary btn-lg">
+                            <i class="fas fa-credit-card me-2"></i>Proceed to Checkout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="reviewsSection" class="reviews-section mt-5">
+    <h2 class="mb-4 text-white"><i class="fas fa-comments me-2"></i>Reviews <span class="badge bg-primary" id="reviewCount">3</span></h2>
+    
+    <!-- Write a Review -->
+    <div class="card shadow mb-4">
+        <div class="card-header">
+            <h4 class="mb-0"><i class="fas fa-pen me-2"></i>Write a Review</h4>
+        </div>
+        <div class="card-body">
+            <form id="reviewForm">
+                <div class="mb-3">
+                    <label for="reviewerName" class="form-label text-white">Your Name</label>
+                    <input type="text" class="form-control" id="reviewerName" placeholder="Enter your name" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label text-white">Rating</label>
+                    <div class="star-rating">
+                        <input type="radio" id="star5" name="rating" value="5">
+                        <label for="star5" title="5 stars"><i class="fas fa-star"></i></label>
+                        <input type="radio" id="star4" name="rating" value="4">
+                        <label for="star4" title="4 stars"><i class="fas fa-star"></i></label>
+                        <input type="radio" id="star3" name="rating" value="3">
+                        <label for="star3" title="3 stars"><i class="fas fa-star"></i></label>
+                        <input type="radio" id="star2" name="rating" value="2">
+                        <label for="star2" title="2 stars"><i class="fas fa-star"></i></label>
+                        <input type="radio" id="star1" name="rating" value="1">
+                        <label for="star1" title="1 star"><i class="fas fa-star"></i></label>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="reviewContent" class="form-label text-white">Your Review</label>
+                    <textarea class="form-control" id="reviewContent" rows="4" placeholder="Share your thoughts about the movie..." required></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-paper-plane me-2"></i>Submit Review
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Reviews List -->
+    <div id="reviewsList">
+        <!-- Reviews will be loaded here by JavaScript -->
+    </div>
+</div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-5 mb-4 mb-md-0">
+                    <h5><i class="fas fa-film me-2"></i>Cinema</h5>
+                    <p class="small">Your ultimate movie experience with premium comfort and the latest blockbusters.</p>
+                    <ul class="list-inline mb-0">
+                        <li class="list-inline-item"><a href="#" class="text-white"><i class="fab fa-facebook fa-lg mx-2"></i></a></li>
+                        <li class="list-inline-item"><a href="#" class="text-white"><i class="fab fa-twitter fa-lg mx-2"></i></a></li>
+                        <li class="list-inline-item"><a href="#" class="text-white"><i class="fab fa-instagram fa-lg mx-2"></i></a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h6>Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="../index.html" class="text-white">Home</a></li>
+                        <li><a href="movies.html" class="text-white">Movies</a></li>
+                        <li><a href="../user/register.html" class="text-white">Register</a></li>
+                        <li><a href="../user/login.html" class="text-white">Login</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h6>Contact Us</h6>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-map-marker-alt me-2"></i>123 Cinema Street, City</li>
+                        <li><i class="fas fa-phone me-2"></i>(123) 456-7890</li>
+                        <li><i class="fas fa-envelope me-2"></i>info@cinemaplus.com</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p class="small mb-0">&copy; 2025 Cinema. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../bootstrap.bundle.min.js"></script>
+    <script src="movies.js"></script>
+    <script src="movie-detail.js"></script>
+    <script src="movie-reviews.js"></script>
+    <script src="../chatbot/chatbot-widget.js"></script>
+</body>
+</html>

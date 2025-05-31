@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinema - Your Ultimate Movie Experience</title>
+    <link href="bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Background Pattern -->
+    <div class="cinema-pattern"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html"><i class="fas fa-film me-2"></i>Cinema</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html"><i class="fas fa-home me-1"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="movies/movies.html"><i class="fas fa-video me-1"></i> Movies</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="user/profile.html"><i class="fas fa-user me-1"></i> Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="user/register.html"><i class="fas fa-user-plus me-1"></i> Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="user/login.html"><i class="fas fa-sign-in-alt me-1"></i> Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section text-center text-white">
+        <div class="container">
+            <h1 class="display-3 fw-bold mb-4">Experience Movies Like Never Before</h1>
+            <p class="lead mb-5">Book your tickets online and enjoy the latest blockbusters in premium comfort</p>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                <a href="#movies-section" class="btn btn-primary btn-lg px-5"><i class="fas fa-ticket-alt me-2"></i>Book Now</a>
+                <a href="user/register.html" class="btn btn-outline-light btn-lg px-5"><i class="fas fa-user-plus me-2"></i>Join Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Movies Section -->
+    <div id="movies-section" class="container my-5 fade-in">
+        <!-- Search -->
+        <div class="row mb-4">
+            <div class="col-md-6 mb-3 mb-md-0">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search for movies...">
+                    <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Now Showing -->
+        <h3 class="mb-4"><i class="fas fa-film me-2"></i>Now Showing</h3>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-5">
+            <!-- Movie 1 -->
+            <div class="col">
+                <div class="card movie-card shadow h-100">
+                    <div class="position-relative">
+                        <img src="https://via.placeholder.com/300x450" class="card-img-top movie-poster" alt="Movie Poster">
+                        <div class="movie-rating">
+                            <i class="fas fa-star me-1"></i>8.5
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title text-white">Avengers: Endgame</h5>
+                        <p class="card-text text-white">Action, Adventure, Sci-Fi</p>
+                        <p class="card-text-white"><small class="text-white">Duration: 3h 1m</small></p>
+                        <div class="d-grid">
+                            <a href="movie-detail.html?id=avengers" class="btn btn-primary"><i class="fas fa-ticket-alt me-2"></i>Book Tickets</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Movie 2 -->
+            <div class="col">
+                <div class="card movie-card shadow h-100">
+                    <div class="position-relative">
+                        <img src="https://via.placeholder.com/300x450" class="card-img-top movie-poster" alt="Movie Poster">
+                        <div class="movie-rating">
+                            <i class="fas fa-star me-1"></i>9.0
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title text-white">The Batman</h5>
+                        <p class="card-text text-white">Action, Crime, Drama</p>
+                        <p class="card-text"><small class="text-white">Duration: 2h 56m</small></p>
+                        <div class="d-grid">
+                            <a href="movie-detail.html?id=batman" class="btn btn-primary"><i class="fas fa-ticket-alt me-2"></i>Book Tickets</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Movie 3 -->
+            <div class="col">
+                <div class="card movie-card shadow h-100">
+                    <div class="position-relative">
+                        <img src="https://via.placeholder.com/300x450" class="card-img-top movie-poster" alt="Movie Poster">
+                        <div class="movie-rating">
+                            <i class="fas fa-star me-1"></i>7.8
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title text-white">Dune</h5>
+                        <p class="card-text text-white">Adventure, Drama, Sci-Fi</p>
+                        <p class="card-text"><small class="text-white">Duration: 2h 35m</small></p>
+                        <div class="d-grid">
+                            <a href="movie-detail.html?id=dune" class="btn btn-primary"><i class="fas fa-ticket-alt me-2"></i>Book Tickets</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Movie 4 -->
+            <div class="col">
+                <div class="card movie-card shadow h-100">
+                    <div class="position-relative">
+                        <img src="https://via.placeholder.com/300x450" class="card-img-top movie-poster" alt="Movie Poster">
+                        <div class="movie-rating">
+                            <i class="fas fa-star me-1"></i>8.2
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">No Time to Die</h5>
+                        <p class="card-text text-white">Action, Adventure, Thriller</p>
+                        <p class="card-text"><small class="text-white">Duration: 2h 43m</small></p>
+                        <div class="d-grid">
+                            <a href="movies/movie-detail.html" class="btn btn-primary"><i class="fas fa-ticket-alt me-2"></i>Book Tickets</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-5 mb-4 mb-md-0">
+                    <h5><i class="fas fa-film me-2"></i>Cinema</h5>
+                    <p class="small">Your ultimate movie experience with premium comfort and the latest blockbusters.</p>
+                    <ul class="list-inline mb-0">
+                        <li class="list-inline-item"><a href="https://www.facebook.com/cinema" class="text-white"><i class="fab fa-facebook fa-lg mx-2"></i></a></li>
+                        <li class="list-inline-item"><a href="https://x.com/cinema" class="text-white"><i class="fab fa-twitter fa-lg mx-2"></i></a></li>
+                        <li class="list-inline-item"><a href="https://www.instagram.com/cinema" class="text-white"><i class="fab fa-instagram fa-lg mx-2"></i></a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h6>Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-white">Home</a></li>
+                        <li><a href="movies/movies.html" class="text-white">Movies</a></li>
+                        <li><a href="user/register.html" class="text-white">Register</a></li>
+                        <li><a href="user/login.html" class="text-white">Login</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h6>Contact Us</h6>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-map-marker-alt me-2"></i>123 Cinema Street, City</li>
+                        <li><i class="fas fa-phone me-2"></i>(123) 456-7890</li>
+                        <li><i class="fas fa-envelope me-2"></i>info@cinema.com</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p class="small mb-0">&copy; 2025 Cinema. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="bootstrap.bundle.min.js"></script>
+    <script src="movies.js"></script>
+    <script src="./chatbot/chatbot-widget.js"></script>
+</body>
+</html>
