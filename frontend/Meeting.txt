@@ -1,0 +1,45 @@
+Meeting Topics :
+    1- Database
+    2- Ai Chatbot (Train and functionality)
+    3- API Flow (how things work?!)
+    4- What Expected From the frontend Dev 
+
+
+
+----------------------------------------------------
+user, reviews, payment, chatbot, booking, movies
+
+User:
+1- register (email, username, password, password2, firstname, lastname)
+2- verify your account (page with verified) redirect login hyperlink
+3- login (username, password)
+4- reset password  (email only button send) -> new page -> new_password, confirm password
+5- resend verification (type your email and button send)
+6- logout button in navbar 
+7- profile view (
+    "username": "youssef340",
+    "email": "sofaashraf42@gmail.com",
+    "first_name": "youssef",
+    "last_name": "ashraf",
+    "profile_photo": null,
+    "date_joined": "2025-03-30T13:17:51.435311Z",
+    "last_login": "2025-04-28T19:48:54.493685Z",
+    "booked_tickets": [],
+    "change_password_link": "http://127.0.0.1:8000/api/users/change-password/"
+)
+-------------------------------------------------------------
+Movies:
+1- home page ( view all movies )
+2- detailed page for each movies (book now button) -> book now redirect to booking page
+----------------------------------------------------------
+Booking page 
+1- cart (movies, number of tickets) -> ( + & - ) price, avalabile seats backend + frontend
+procces to checkout -> button to redirect to payment page system
+------------------------------------------------------------
+Chatbot 
+1- messages (text box to write message, button send message)
+-------------------------------------------------------------
+Reviews :
+comment in the same page of detailed page in each movies
+
+
