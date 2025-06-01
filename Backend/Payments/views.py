@@ -56,7 +56,8 @@ class StripeCheckoutView(APIView):
                 mode='payment',
                 customer_email=request.user.email,
                 payment_method_types=['card'],
-                success_url = f"{settings.BASE_URL}{reverse('ticket_download', args=[str(booking.id)])}?session_id={{CHECKOUT_SESSION_ID}}",
+                success_url = f"{settings.FRONT_BASE_URL}movies/ticket.html?booking_id={booking.id}&session_id={{CHECKOUT_SESSION_ID}}",
+                #success_url = f"{settings.BASE_URL}{reverse('ticket_download', args=[str(booking.id)])}?session_id={{CHECKOUT_SESSION_ID}}",
                 cancel_url = f"{settings.BASE_URL}{reverse('payment_cancelled')}",
                 metadata={'booking_id': str(booking.id)}
             )

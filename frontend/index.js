@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const API_URL = 'http://127.0.0.1:8000/api';
+    const API_URL = 'http://127.0.0.1:8000/api/';
     const moviesContainer = document.querySelector('.movies-grid');
     const loadingElement = document.getElementById('loadingMovies');
     const paginationElement = document.getElementById('moviePagination');
@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (loadingElement) loadingElement.style.display = 'block';
             if (moviesContainer) moviesContainer.style.display = 'none';
 
-            const response = await fetch(`${API_URL}/movies/home/?page=${page}`, {
+            const response = await fetch(`${API_URL}movies/home/?page=${page}`, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',

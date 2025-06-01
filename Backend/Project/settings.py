@@ -19,8 +19,9 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-BASE_URL = os.getenv('BASE_URL')
-ALLOWED_HOSTS = ['6159-156-209-37-159.ngrok-free.app', '127.0.0.1', 'localhost',]
+BASE_URL = 'https://60fc-156-209-127-180.ngrok-free.app'
+FRONT_BASE_URL = 'http://127.0.0.1:5500/frontend/'
+ALLOWED_HOSTS = ['60fc-156-209-127-180.ngrok-free.app', '127.0.0.1', 'localhost', 'http://127.0.0.1:5500/frontend/']
 
 
 # Application definition

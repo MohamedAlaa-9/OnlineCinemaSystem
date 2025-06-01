@@ -22,4 +22,4 @@ class ReviewSerializer(serializers.ModelSerializer):
 class ShowtimesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Showtime
-        fields = ['starts_at', 'available_seats']
+        fields = ['id','starts_at', 'available_seats']

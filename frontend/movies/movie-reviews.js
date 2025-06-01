@@ -44,7 +44,7 @@ async function loadReviews() {
     }
 
     // Get reviews for this movie
-    const response = await fetch(`${API_URL}/movies/${encodeURIComponent(movieName)}/reviews/`, {
+    const response = await fetch(`${API_URL}/movies/${encodeURIComponent(movieName)}/review/`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Accept': 'application/json'
@@ -174,7 +174,7 @@ async function submitReview() {
     }
 
     // Submit review to backend
-    const response = await fetch(`${API_URL}/movies/${encodeURIComponent(movieName)}/`, {
+    const response = await fetch(`${API_URL}/movies/${encodeURIComponent(movieName)}/review/`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,

@@ -177,7 +177,7 @@ class ChangePasswordView(views.APIView):
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
     """User Profile API View"""
-    queryset = User.objects.all()
+
     serializer_class = UserProfileSerializer
     permission_classes = [IsAuthenticated]
 

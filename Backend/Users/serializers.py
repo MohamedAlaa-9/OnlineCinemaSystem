@@ -37,7 +37,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     def get_booked_tickets(self, obj):
         """Get booked tickets for the user"""
         bookings = Booking.objects.filter(user=obj)
-        return [{'movie_title': b.movie_title, 'booked_at': b.booked_at} for b in bookings]
+        return [{'movie_title': b.showtime.movie.title, 'booked_at': b.booked_at} for b in bookings]
 
     def get_change_password_link(self, obj):
         """Get change password link for the user"""

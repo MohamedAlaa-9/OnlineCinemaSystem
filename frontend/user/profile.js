@@ -1,3 +1,4 @@
+import { updateNavbar } from "./auth.js";
 document.addEventListener("DOMContentLoaded", () => {
     const profileUrl = "http://127.0.0.1:8000/api/users/profile/";
     const logoutUrl = "http://127.0.0.1:8000/api/users/logout/";

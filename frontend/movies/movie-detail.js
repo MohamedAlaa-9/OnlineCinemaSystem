@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('access_token');
     const urlParams = new URLSearchParams(window.location.search);
     const movieName = urlParams.get('name');
-    
+    let groupedShowtimes = {};
     // Elements
     const movieTitle = document.getElementById('movieTitle');
     const moviePoster = document.getElementById('moviePoster');
@@ -174,62 +174,114 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    async function loadShowtimes() {
+        try {
+            const response = await fetch(`${API_URL}/movies/${encodeURIComponent(movieName)}/showtimes/`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                throw new Error(`Error fetching showtimes: ${response.statusText}`);
+            }
+    
+            const showtimes = await response.json();
+    
+            // Clear selects
+            dateSelect.innerHTML = '<option value="">Select Date</option>';
+            timeSelect.innerHTML = '<option value="">Select Time</option>';
+    
+            showtimes.forEach(st => {
+                const dt = new Date(st.starts_at);
+                const date = dt.toISOString().split('T')[0];
+                const time = dt.toTimeString().slice(0, 5);
+                const id = st.id;
+            
+                if (!groupedShowtimes[date]) groupedShowtimes[date] = [];
+                groupedShowtimes[date].push({ time, id });
+            });
+    
+            Object.keys(groupedShowtimes).forEach(date => {
+                const option = document.createElement('option');
+                option.value = date;
+                option.textContent = date;
+                dateSelect.appendChild(option);
+            });
+    
+            // When a date is selected, populate timeSelect
+            dateSelect.addEventListener('change', () => {
+                const selectedDate = dateSelect.value;
+                timeSelect.innerHTML = '<option value="">Select Time</option>';
+                if (groupedShowtimes[selectedDate]) {
+                    groupedShowtimes[selectedDate].forEach(entry => {
+                        const opt = document.createElement('option');
+                        opt.value = entry.id;
+                        opt.textContent = entry.time;
+                        timeSelect.appendChild(opt);
+                    });
+                }
+            });
+    
+        } catch (err) {
+            console.error('Failed to load showtimes:', err);
+        }
+    }
+    
 
     // Handle booking form submission
     if (bookingForm) {
-        bookingForm.addEventListener('submit', async (e) => {
+        bookingForm.addEventListener('submit', async e => {
             e.preventDefault();
-            console.log('Form submitted');
-
-            if (!token) {
-                alert('Please log in to book tickets');
-                window.location.href = '../user/login.html';
-                return;
-            }
-
-            const selectedTime = timeSelect.value;
-            const selectedDate = dateSelect.value;
-            const numberOfTickets = parseInt(ticketCount.textContent);
-
-            console.log('Selected time:', selectedTime);
-            console.log('Selected date:', selectedDate);
-            console.log('Number of tickets:', numberOfTickets);
-
-            if (!selectedDate || !selectedTime) {
-                alert('Please select a date and time');
-                return;
-            }
-
+        
+            const showtime_id = timeSelect.value;
+            const count = parseInt(ticketCount.textContent);
+            if (!showtime_id || !count) return alert("Select time and number of tickets");
+        
             try {
-                console.log('Sending request to add to cart');
-                const response = await fetch(`${API_URL}/bookings/add-to-cart/`, {
+                // 1. Step One: Book tickets and get booking ID
+                const bookingRes = await fetch(`${API_URL}/bookings/BookNow/`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        title: movieData.title,
-                        starts_at: `${selectedDate}T${selectedTime}`,
-                        count: numberOfTickets
-                    })
+                    body: JSON.stringify({ showtime_id, count })
                 });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+        
+                if (!bookingRes.ok) {
+                    const errData = await bookingRes.json();
+                    throw new Error(errData.error || "Booking failed");
                 }
-
-                const result = await response.json();
-                console.log('Successfully added to cart:', result);
-                alert('Added to cart successfully! Redirecting to payment...');
-                window.location.href = '../payment/payment.html';
-
-            } catch (error) {
-                console.error('Error adding to cart:', error);
-                alert('Failed to add to cart. Please try again later.');
+        
+                const bookingId = await bookingRes.json();
+                console.log("Booking created with ID:", bookingId);
+        
+                // 2. Step Two: Create Stripe Checkout Session
+                const stripeRes = await fetch(`${API_URL}/stripe/create-checkout-session/`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ showtime_id, quantity: count })
+                });
+        
+                if (!stripeRes.ok) {
+                    const errData = await stripeRes.json();
+                    throw new Error(errData.error || "Stripe session creation failed");
+                }
+        
+                const stripeData = await stripeRes.json();
+                console.log("Redirecting to Stripe Checkout:", stripeData.checkout_url);
+                window.location.href = stripeData.checkout_url;
+        
+            } catch (err) {
+                console.error("Error during booking + checkout:", err);
+                alert(`Checkout failed: ${err.message}`);
             }
         });
-    }
+    }        
 
     // Handle review form submission
     if (reviewForm) {
@@ -251,7 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                const response = await fetch(`${API_URL}/movies/${encodeURIComponent(movieName)}/`, {
+                const response = await fetch(`${API_URL}/movies/${encodeURIComponent(movieName)}/review/`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -342,7 +394,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Initialize
+    loadShowtimes();
     loadMovieDetails();
+    
     updateNavbar();
     updateCartTotals();
 

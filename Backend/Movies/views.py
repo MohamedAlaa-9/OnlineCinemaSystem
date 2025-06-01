@@ -12,6 +12,7 @@ from rest_framework.pagination import PageNumberPagination
 
 class CustomPagination(PageNumberPagination):
     page_size = 16
+    page_size_query_param = 'page_size'
     page_query_param = 'page'
 
 class Home(APIView):
@@ -22,7 +23,9 @@ class Home(APIView):
         paginator = CustomPagination()
         paginated_qs = paginator.paginate_queryset(movies, request)
         serializer = MovieSerializer(paginated_qs, many=True)
-        return paginator.get_paginated_response(serializer.data)
+        return Response({"movies": serializer.data,
+                        "current_page": paginator.page.number,
+                        "total_pages": paginator.page.paginator.num_pages}, status=status.HTTP_200_OK)
 
 class MovieDetails(APIView):
     permission_classes = [IsAuthenticated]
@@ -73,9 +76,9 @@ class MovieReviewView(APIView):
 class MovieShowtimeView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, title):
+    def get(self, request, name):
         try:
-            movie = Movie.objects.get(title=title)
+            movie = Movie.objects.get(title=name)
         except Movie.DoesNotExist:
             return Response({"error": "Movie not found"}, status=status.HTTP_404_NOT_FOUND)
         showtimes = Showtime.objects.filter(movie=movie)
