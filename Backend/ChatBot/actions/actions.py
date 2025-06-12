@@ -36,79 +36,78 @@ def get_movie_by_name(name: str) -> Movie:
         return None
         
     try:
-        # Clean the input name
+        # Clean the input name and try Arabic to English number conversion
         clean_name = name.strip().lower()
+        arabic_to_english = str.maketrans('٠١٢٣٤٥٦٧٨٩', '0123456789')
+        clean_name = clean_name.translate(arabic_to_english)
         
         # Try exact match first (case insensitive)
         movie = Movie.objects.filter(title__iexact=clean_name).first()
         if movie:
             return movie
             
-        # Common typo replacements
-        typo_replacements = {
-            'gladitor': 'gladiator',
-            'theator': 'theater',
-            '&': 'and',
-            # Add more common typos here
-        }
+        # Try exact match with common variations
+        variations = [
+            clean_name,
+            clean_name.replace(':', ''),  # Remove colons
+            clean_name.replace('-', ' '),  # Replace hyphens with spaces
+            clean_name.replace('&', 'and'),  # Replace & with 'and'
+            ' '.join(clean_name.split()),  # Normalize spaces
+            clean_name.replace('2', 'two'),  # Replace numbers with words
+            clean_name.replace('two', '2'),  # Replace words with numbers
+            clean_name.replace('موانا', 'moana'),  # Common Arabic title translations
+            clean_name.replace('الجزء', 'part'),
+        ]
         
-        # Try replacing known typos
-        for typo, correct in typo_replacements.items():
-            if typo in clean_name:
-                clean_name = clean_name.replace(typo, correct)
-                movie = Movie.objects.filter(title__iexact=clean_name).first()
-                if movie:
-                    return movie
-        
-        # Remove common words and try partial matching
-        common_words = {'the', 'a', 'an', 'and', '&', 'vs', 'versus', 'part'}
-        search_terms = set(term.strip("'\".,!?-:") for term in clean_name.split())
-        search_terms = {term for term in search_terms if term and term.lower() not in common_words}
-        
-        if not search_terms:
-        return None
+        for variation in variations:
+            movie = Movie.objects.filter(title__iexact=variation).first()
+            if movie:
+                return movie
 
-        # Build Q objects for each search term
-        query = Q()
-        for term in search_terms:
-            # Try both exact and fuzzy matching
-            query |= Q(title__icontains=term)
-            # Add fuzzy matching by removing vowels
-            term_no_vowels = ''.join(c for c in term if c not in 'aeiou')
-            if len(term_no_vowels) > 2:  # Only if we have enough consonants
-                query |= Q(title__iregex=term_no_vowels)
+        # If no exact match, try partial matching with high threshold
+        words = clean_name.split()
+        if len(words) > 0:
+            # Create a query that matches all words in any order
+            query = Q()
+            for word in words:
+                if len(word) > 2:  # Ignore very short words
+                    query &= Q(title__icontains=word)
             
-        movies = Movie.objects.filter(query)
-        
-        # If we have multiple matches, try to find the best one
-        best_match = None
-        highest_ratio = 0
-        
-        for movie in movies:
-            # Clean movie title the same way
-            title_terms = set(term.strip("'\".,!?-:") for term in movie.title.lower().split())
-            title_terms = {term for term in title_terms if term and term.lower() not in common_words}
-            
-            # Count matching terms
-            matching_terms = len(search_terms.intersection(title_terms))
-            
-            # Calculate match ratio based on term matches
-            ratio = matching_terms / max(len(search_terms), len(title_terms))
-            
-            # Boost ratio for partial string matches
-            for search_term in search_terms:
-                if search_term in movie.title.lower():
-                    ratio += 0.2
-            
-            # Update best match if this one is better
-            if ratio > highest_ratio:
-                highest_ratio = ratio
-                best_match = movie
-        
-        # Return if we have a decent match (35% or better)
-        if highest_ratio >= 0.35:
-            return best_match
+            movies = Movie.objects.filter(query)
+            if movies.exists():
+                # If we have matches, find the closest one
+                best_match = None
+                highest_similarity = 0
                 
+                for movie in movies:
+                    # Calculate word-based similarity
+                    movie_words = set(movie.title.lower().split())
+                    search_words = set(words)
+                    common_words = movie_words.intersection(search_words)
+                    
+                    # Calculate similarity ratio
+                    similarity = len(common_words) / max(len(movie_words), len(search_words))
+                    
+                    # Boost score for sequential word matches
+                    if all(word in movie.title.lower() for word in words):
+                        similarity += 0.3
+                    
+                    # Boost score for matching first word
+                    if movie.title.lower().startswith(words[0]):
+                        similarity += 0.2
+                    
+                    # Extra boost for number matches (e.g., "2" matches "2" or "two")
+                    if any(w.isdigit() for w in words) and any(w.isdigit() for w in movie_words):
+                        similarity += 0.2
+                    
+                    if similarity > highest_similarity:
+                        highest_similarity = similarity
+                        best_match = movie
+                
+                # Only return if we have a very good match (75% or better)
+                if highest_similarity >= 0.75:
+                    return best_match
+        
         return None
     except Exception as e:
         print(f"Error in get_movie_by_name: {str(e)}")
@@ -368,11 +367,11 @@ class ActionAskMovieShowtimes(BaseAction):
                     for showtime in showtimes
                 ])
                 response = f"Showtimes for {movie.title}:\n{showtime_text}"
-                else:
+            else:
                 response = f"No showtimes available for {movie.title}."
             
             dispatcher.utter_message(text=response)
-            except Exception as e:
+        except Exception as e:
             await self.handle_error(dispatcher, e)
         return []
 
@@ -414,16 +413,16 @@ class ActionAskMovieDirector(BaseAction):
             dispatcher.utter_message(text="Please provide the movie name.")
             return []
 
-            try:
-                movie = await get_movie_by_name(movie_name)
-                if movie:
+        try:
+            movie = await get_movie_by_name(movie_name)
+            if movie:
                 if hasattr(movie, 'director'):
                     # Convert to string if it's a list
                     director = movie.director[0] if isinstance(movie.director, list) else movie.director
                     dispatcher.utter_message(text=f"The director of {movie.title} is {director}.")
                 else:
                     dispatcher.utter_message(text=f"Sorry, I don't have director information for {movie.title}.")
-        else:
+            else:
                 await self.handle_movie_not_found(dispatcher, movie_name)
         except Exception as e:
             await self.handle_error(dispatcher, e)
@@ -439,14 +438,14 @@ class ActionAskMovieRating(BaseAction):
             dispatcher.utter_message(text="Please specify the movie name.")
             return []
 
-            try:
-                movie = await get_movie_by_name(movie_name)
-                if movie:
+        try:
+            movie = await get_movie_by_name(movie_name)
+            if movie:
                 if hasattr(movie, 'imdb_rating') and movie.imdb_rating:
                     dispatcher.utter_message(text=f"{movie.title} has an IMDb rating of {movie.imdb_rating}/10.")
                 else:
                     dispatcher.utter_message(text=f"Sorry, I don't have rating information for {movie.title}.")
-        else:
+            else:
                 await self.handle_movie_not_found(dispatcher, movie_name)
         except Exception as e:
             await self.handle_error(dispatcher, e)
@@ -462,15 +461,15 @@ class ActionAskMovieGenre(BaseAction):
             dispatcher.utter_message(text="Please specify the movie name.")
             return []
 
-            try:
-                movie = await get_movie_by_name(movie_name)
-                if movie:
+        try:
+            movie = await get_movie_by_name(movie_name)
+            if movie:
                 if hasattr(movie, 'genres') and movie.genres.exists():
                     genres = ", ".join([genre.type for genre in movie.genres.all()])
                     dispatcher.utter_message(text=f"{movie.title} belongs to the following genres: {genres}")
                 else:
                     dispatcher.utter_message(text=f"Sorry, I don't have genre information for {movie.title}.")
-        else:
+            else:
                 await self.handle_movie_not_found(dispatcher, movie_name)
         except Exception as e:
             await self.handle_error(dispatcher, e)
@@ -486,16 +485,16 @@ class ActionAskMovieLocation(BaseAction):
             dispatcher.utter_message(text="Please specify which movie you'd like to know about.")
             return []
 
-            try:
-                movie = await get_movie_by_name(movie_name)
-                if movie:
+        try:
+            movie = await get_movie_by_name(movie_name)
+            if movie:
                 cinema_halls = await get_movie_cinema_halls(movie.id)
                 if cinema_halls:
                     locations = ", ".join(cinema_halls)
                     dispatcher.utter_message(text=f"{movie.title} is being screened at: {locations}")
                 else:
                     dispatcher.utter_message(text=f"{movie.title} is not currently showing in any cinema halls.")
-        else:
+            else:
                 await self.handle_movie_not_found(dispatcher, movie_name)
         except Exception as e:
             await self.handle_error(dispatcher, e)
@@ -544,7 +543,7 @@ class ActionAskMovieInfo(BaseAction):
                 
                 if info:
                     response = "\n".join(info)
-        dispatcher.utter_message(text=response)
+                    dispatcher.utter_message(text=response)
                 else:
                     dispatcher.utter_message(text=f"I found {movie.title}, but I don't have any additional information about it.")
             else:
@@ -563,14 +562,14 @@ class ActionAskReleaseDate(BaseAction):
             dispatcher.utter_message(text="Please specify the movie name.")
             return []
 
-            try:
-                movie = await get_movie_by_name(movie_name)
-                if movie:
+        try:
+            movie = await get_movie_by_name(movie_name)
+            if movie:
                 if hasattr(movie, 'release_date') and movie.release_date:
                     dispatcher.utter_message(text=f"{movie.title} was released on {movie.release_date}.")
                 else:
                     dispatcher.utter_message(text=f"Sorry, I don't have release date information for {movie.title}.")
-        else:
+            else:
                 await self.handle_movie_not_found(dispatcher, movie_name)
         except Exception as e:
             await self.handle_error(dispatcher, e)
@@ -617,12 +616,12 @@ class ActionAskMovieAvailability(BaseAction):
             movie = await get_movie_by_name(movie_name)
             if movie:
                 if hasattr(movie, 'is_available'):
-                response = f"{movie.title} is currently {'available' if movie.is_available else 'not available'} in cinemas."
-            else:
+                    response = f"{movie.title} is currently {'available' if movie.is_available else 'not available'} in cinemas."
+                else:
                     response = f"Sorry, I don't have availability information for {movie.title}."
             else:
                 await self.handle_movie_not_found(dispatcher, movie_name)
-        dispatcher.utter_message(text=response)
+            dispatcher.utter_message(text=response)
         except Exception as e:
             await self.handle_error(dispatcher, e)
         return []
@@ -704,7 +703,7 @@ class ActionAskGenreRecommendation(BaseAction):
                 response = f"Here are some top-rated {genre} movies: {titles}"
             else:
                 response = f"I couldn't find any movies in the {genre} genre."
-        dispatcher.utter_message(text=response)
+            dispatcher.utter_message(text=response)
         except Exception as e:
             await self.handle_error(dispatcher, e)
         return []
@@ -743,11 +742,11 @@ class ActionAskMovieTheaterAvailability(BaseAction):
                 cinema_halls = await get_movie_cinema_halls(movie.id)
                 if cinema_halls:
                     response = f"{movie.title} is being shown at: {', '.join(cinema_halls)}"
-            else:
+                else:
                     response = f"{movie.title} is not currently in theaters."
             else:
                 await self.handle_movie_not_found(dispatcher, movie_name)
-        dispatcher.utter_message(text=response)
+            dispatcher.utter_message(text=response)
         except Exception as e:
             await self.handle_error(dispatcher, e)
         return []
@@ -823,7 +822,7 @@ class ActionAskTopRatedMovies(BaseAction):
                 response = f"Here are the top-rated movies: {titles}"
             else:
                 response = "No top-rated movies found."
-        dispatcher.utter_message(text=response)
+            dispatcher.utter_message(text=response)
         except Exception as e:
             await self.handle_error(dispatcher, e)
         return []
